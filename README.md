@@ -58,6 +58,20 @@ cd client && npm install
 npm run dev
 ```
 
+## 🌐 Environment Variables
+
+Create a `server/.env` file with the following keys:
+
+```env
+PORT=5000
+MONGO_URI=mongodb+srv://...
+JWT_ACCESS_SECRET=...
+JWT_REFRESH_SECRET=...
+CLOUDINARY_CLOUD_NAME=...
+CLOUDINARY_API_KEY=...
+CLOUDINARY_API_SECRET=...
+```
+
 ## 👥 Team
 
 - **Shreya Saxena** (shreyasaxena121)
