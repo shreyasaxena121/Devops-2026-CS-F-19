@@ -41,6 +41,17 @@ campuscart/
 └── README.md
 ```
 
+## 📝 API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/auth/register` | Register new user |
+| POST | `/api/auth/login` | Login |
+| GET | `/api/products` | List all products |
+| POST | `/api/products` | Create product |
+| GET | `/api/products/:id` | Get product details |
+| POST | `/api/orders` | Place order |
+
 ## ⚡ Quick Start
 
 ```bash
