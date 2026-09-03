@@ -41,6 +41,10 @@ campuscart/
 └── README.md
 ```
 
+## 📄 License
+
+This project is for educational purposes as part of the DevOps course (CS-F-19).
+
 ## 📝 API Endpoints
 
 | Method | Endpoint | Description |
