@@ -38,6 +38,7 @@ jobs:
       run: |
         npm --prefix client run build
 
+    # Validate infrastructure-as-code configurations
     - name: Validate Kubernetes Manifests
       run: |
         kubectl kustomize k8s/
