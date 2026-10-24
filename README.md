@@ -41,6 +41,36 @@ campuscart/
 └── README.md
 ```
 
+
+## 🐳 Docker
+
+```bash
+# Build and run all services
+docker compose up --build
+
+# Backend only
+docker build -t campuscart-api .
+docker run -p 5000:5000 campuscart-api
+```
+
+## ☸️ Kubernetes
+
+```bash
+# Deploy to local cluster
+kubectl apply -k k8s/
+
+# Verify
+kubectl get pods
+kubectl get services
+```
+
+See [k8s/README.md](k8s/README.md) for detailed deployment guide.
+
+## 🔄 CI/CD
+
+- **GitHub Actions** — Automated testing, linting, and build on every push
+- **Jenkins** — Full CI/CD pipeline with deployment stages
+
 ## 📄 License
 
 This project is for educational purposes as part of the DevOps course (CS-F-19).
