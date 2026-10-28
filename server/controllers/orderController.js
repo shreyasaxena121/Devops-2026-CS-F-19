@@ -5,6 +5,8 @@ const Order = require("../models/Order");
 const Product = require("../models/Product");
 const User = require("../models/User");
 const sendEmail = require("../utils/sendEmail");
+const { registry } = require("../metrics/prometheus");
+const socketServer = require("../sockets/socketServer");
 
 
 // ================= CREATE PURCHASE REQUEST =================
@@ -65,6 +67,13 @@ exports.createOrder = async (req, res) => {
     });
 
     await newOrder.save();
+    registry.ordersCreatedTotal.inc();
+    socketServer.broadcast('NEW_ORDER', {
+      orderId: newOrder._id,
+      productTitle: newOrder.productTitle,
+      amount: newOrder.amount,
+      sellerId: newOrder.sellerId
+    });
 
     res.status(201).json({
       msg: "Purchase request sent successfully",

@@ -2,6 +2,8 @@ const Product = require('../models/Product');
 const cloudinary = require('../config/cloudinary');
 const axios = require('axios');
 const { generateEmbedding } = require('../utils/embedding');
+const { registry } = require('../metrics/prometheus');
+const socketServer = require('../sockets/socketServer');
 
 // ─────────────────────────────────────────────
 // Cloudinary upload helper
@@ -118,6 +120,15 @@ exports.createProduct = async (req, res) => {
     });
 
     const saved = await product.save();
+    registry.productsCreatedTotal.inc();
+    socketServer.broadcast('NEW_PRODUCT', {
+      product: {
+        id: saved._id,
+        title: saved.title,
+        price: saved.price,
+        category: saved.category
+      }
+    });
     res.json(saved);
 
   } catch (err) {

@@ -1,0 +1,8 @@
+// Redux Action Types for CampusCart
+export const ADD_NOTIFICATION = 'ADD_NOTIFICATION';
+export const CLEAR_NOTIFICATIONS = 'CLEAR_NOTIFICATIONS';
+export const SET_ONLINE_USERS = 'SET_ONLINE_USERS';
+export const SET_CONNECTION_STATUS = 'SET_CONNECTION_STATUS';
+export const ADD_TO_CART = 'ADD_TO_CART';
+export const REMOVE_FROM_CART = 'REMOVE_FROM_CART';
+export const CLEAR_CART = 'CLEAR_CART';

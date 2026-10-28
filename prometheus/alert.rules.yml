@@ -1,0 +1,29 @@
+groups:
+  - name: campuscart_alerts
+    rules:
+      - alert: CampusCartApiDown
+        expr: up{job="campuscart-api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "CampusCart API instance is down"
+          description: "Instance {{ $labels.instance }} has been unreachable for more than 1 minute."
+
+      - alert: HighRequestLatency
+        expr: rate(http_request_duration_seconds_sum[1m]) / rate(http_request_duration_seconds_count[1m]) > 1.5
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "CampusCart API high latency observed"
+          description: "Average latency exceeds 1.5s on route {{ $labels.route }}."
+
+      - alert: HighErrorRate
+        expr: sum(rate(http_requests_total{status_code=~"5.."}[1m])) / sum(rate(http_requests_total[1m])) * 100 > 5
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High 5xx error rate detected"
+          description: "HTTP 5xx error rate is above 5% over the last 2 minutes."

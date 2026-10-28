@@ -24,9 +24,14 @@ const connectDB = require("./config/db");
 const cors = require("cors");
 const http = require("http");
 const jwt = require("jsonwebtoken");
+const { registry } = require("./metrics/prometheus");
+const socketServer = require("./sockets/socketServer");
 
 const app = express();
 const server = http.createServer(app);
+
+// Attach WebSocket server for real-time notifications
+socketServer.attach(server);
 
 // ==========================
 // CORS origin resolver
@@ -63,22 +68,30 @@ const Order = require("./models/Order");
 // ==========================
 // Database
 // ==========================
-console.log("Connecting DB...");
-connectDB();
+if (process.env.NODE_ENV !== "test") {
+  console.log("Connecting DB...");
+  connectDB();
+}
 
 // ==========================
 // Middleware
 // ==========================
 app.use(cors(corsOptions)); // handles preflight OPTIONS automatically
-app.use(express.json({ limit: '10mb' }));
+app.use(registry.middleware()); // Prometheus request latency & counter metrics
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
 // ==========================
-// Health Route
+// Health & Observability Routes
 // ==========================
 app.get("/", (req, res) => {
   res.send("CampusCart Backend Running 🚀");
+});
+
+// Prometheus Metrics Scrape Endpoint
+app.get("/metrics", (req, res) => {
+  res.setHeader("Content-Type", "text/plain; version=0.0.4; charset=utf-8");
+  res.send(registry.exportMetrics());
 });
 
 // ==========================
@@ -122,27 +135,31 @@ app.use((err, req, res, next) => {
 // ==========================
 const PORT = process.env.PORT || 5000;
 
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+if (process.env.NODE_ENV !== 'test' && require.main === module) {
+  server.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 
-  // 📧 Email config diagnostic (visible in Render logs)
-  console.log(`📧 EMAIL_USER: ${process.env.EMAIL_USER ? process.env.EMAIL_USER : '❌ NOT SET'}`);
-  console.log(`📧 EMAIL_PASS: ${process.env.EMAIL_PASS ? '✅ SET' : '❌ NOT SET'}`);
-  console.log(`📧 BREVO_API_KEY: ${process.env.BREVO_API_KEY ? '✅ SET' : '❌ NOT SET — emails will NOT work on Render!'}`);
-  if (!process.env.BREVO_API_KEY) {
-    console.warn('⚠️  Add BREVO_API_KEY in Render Environment Variables for emails to work!');
-  }
+    // 📧 Email config diagnostic (visible in Render logs)
+    console.log(`📧 EMAIL_USER: ${process.env.EMAIL_USER ? process.env.EMAIL_USER : '❌ NOT SET'}`);
+    console.log(`📧 EMAIL_PASS: ${process.env.EMAIL_PASS ? '✅ SET' : '❌ NOT SET'}`);
+    console.log(`📧 BREVO_API_KEY: ${process.env.BREVO_API_KEY ? '✅ SET' : '❌ NOT SET — emails will NOT work on Render!'}`);
+    if (!process.env.BREVO_API_KEY) {
+      console.warn('⚠️  Add BREVO_API_KEY in Render Environment Variables for emails to work!');
+    }
 
-  // ✅ Keep-alive ping: prevents Render free tier from sleeping
-  // Pings itself every 14 minutes (Render sleeps after 15 min idle)
-  if (process.env.RENDER_EXTERNAL_URL) {
-    const pingUrl = process.env.RENDER_EXTERNAL_URL;
-    setInterval(() => {
-      require("https").get(pingUrl, (res) => {
-        console.log(`[Keep-alive] Pinged ${pingUrl} → ${res.statusCode}`);
-      }).on("error", (err) => {
-        console.warn("[Keep-alive] Ping failed:", err.message);
-      });
-    }, 14 * 60 * 1000); // every 14 minutes
-  }
-});
+    // ✅ Keep-alive ping: prevents Render free tier from sleeping
+    // Pings itself every 14 minutes (Render sleeps after 15 min idle)
+    if (process.env.RENDER_EXTERNAL_URL) {
+      const pingUrl = process.env.RENDER_EXTERNAL_URL;
+      setInterval(() => {
+        require("https").get(pingUrl, (res) => {
+          console.log(`[Keep-alive] Pinged ${pingUrl} → ${res.statusCode}`);
+        }).on("error", (err) => {
+          console.warn("[Keep-alive] Ping failed:", err.message);
+        });
+      }, 14 * 60 * 1000); // every 14 minutes
+    }
+  });
+}
+
+module.exports = { app, server };

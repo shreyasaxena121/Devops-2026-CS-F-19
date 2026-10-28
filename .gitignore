@@ -8,3 +8,4 @@ server/uploads/
 .env
 client/.env
 server/.env
+test-results.log

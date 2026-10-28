@@ -1,0 +1,15 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+
+rule_files:
+  - "alert.rules.yml"
+
+scrape_configs:
+  - job_name: "campuscart-api"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["api:5000"]
+        labels:
+          environment: "production"
+          service: "campuscart-api"

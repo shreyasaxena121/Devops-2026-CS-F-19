@@ -92,7 +92,9 @@ const About = () => {
       try {
         const sr = await axios.get('/public/stats');
         setStats(sr.data || {});
-      } catch (_) {}
+      } catch (err) {
+        console.warn("Failed to load public stats:", err);
+      }
       finally { setLoaded(true); }
     };
     load();

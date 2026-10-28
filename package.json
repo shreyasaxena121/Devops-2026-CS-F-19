@@ -1,0 +1,19 @@
+{
+  "name": "campuscart-monorepo",
+  "version": "1.0.0",
+  "description": "CampusCart — College Marketplace Platform Monorepo",
+  "private": true,
+  "scripts": {
+    "test": "npm --prefix server test",
+    "test:server": "npm --prefix server test",
+    "lint": "npm --prefix client run lint",
+    "build": "npm --prefix client run build",
+    "start": "npm --prefix server start",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev"
+  },
+  "workspaces": [
+    "server",
+    "client"
+  ]
+}

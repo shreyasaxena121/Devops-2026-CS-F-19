@@ -24,10 +24,13 @@ import SellerRequests from "./pages/SellerRequests";
 import MyRequests from "./pages/MyRequests";
 import AcceptRequest from "./pages/AcceptRequest";
 import About from "./pages/About";
+import RealtimeNotifications from "./components/RealtimeNotifications";
+
 function App() {
   return (
     <AuthProvider>
       <Router>
+        <RealtimeNotifications />
         <Routes>
 
         <Route path="/accept-request/:orderId" element={<AcceptRequest />} />

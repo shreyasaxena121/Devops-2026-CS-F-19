@@ -9,6 +9,7 @@ This directory contains the Kubernetes manifests for deploying CampusCart micros
 - **Database:** MongoDB Stateful deployment (`mongo:7`) with PersistentVolumeClaim (`mongodb-pvc`) and ClusterIP service (`mongodb-service:27017`).
 - **Backend:** Express API deployment (`campuscart-api:latest`) with 2 replicas, environment variables configured via `ConfigMap` and `Secret`, exposed via NodePort service (`backend-service:30050`).
 - **Frontend:** React Nginx client deployment (`campuscart-client:latest`) with 2 replicas, exposed via NodePort service (`frontend-service:30080`).
+- **Monitoring:** Prometheus Server (`prometheus-service:30090`) scraping metrics and Grafana Dashboard (`grafana-service:30030`).
 - **Ingress:** Ingress routing `/` to Frontend and `/api` to Backend.
 
 ---
@@ -44,3 +45,6 @@ kubectl get services
 
 - **Frontend:** http://localhost:30080
 - **Backend API:** http://localhost:30050/api
+- **Metrics Endpoint:** http://localhost:30050/metrics
+- **Prometheus UI:** http://localhost:30090
+- **Grafana Dashboards:** http://localhost:30030 (Credentials: `admin` / `admin`)

@@ -45,7 +45,9 @@ const ProductDetails = () => {
             const relatedRes = await api.get(`/products?category=${res.data.category}`);
             const filtered = (relatedRes.data || []).filter((p) => p._id !== id).slice(0, 8);
             setRelatedProducts(filtered);
-          } catch (_) {}
+          } catch (err) {
+            console.warn("Failed to fetch related products:", err);
+          }
         }
 
         if (isAuthenticated) {
